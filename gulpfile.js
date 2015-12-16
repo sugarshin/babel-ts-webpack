@@ -5,7 +5,7 @@ const browserSync = require('browser-sync');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
 
-gulp.task('server', cb => {
+gulp.task('server', () => {
   browserSync({
     ui: false,
     notify: false,
@@ -16,7 +16,6 @@ gulp.task('server', cb => {
       directory: true
     }
   });
-  cb();
 });
 
 const devWebpack = webpack(Object.assign({}, webpackConfig, {
@@ -31,13 +30,9 @@ gulp.task('webpack:dev', cb => {
   });
 });
 
-gulp.task('predefault', cb => {
-  runSequence('webpack:dev', 'server', cb);
-});
-
-gulp.task('default', ['predefault'], function() {
+gulp.task('default', ['webpack:dev', 'server'], () => {
   gulp.watch(['src/js/**/*.{js,jsx,ts,tsx}'], ['webpack:dev']);
-  gulp.watch(['dest/assets/js/*.js'], [browserSync.reload]);
+  gulp.watch(['dest/assets/js/*.js']).on('change', browserSync.reload);
 });
 
 gulp.task('webpack:build', cb => {
